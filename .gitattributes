@@ -1,0 +1,15 @@
+# Keep text consistent across Windows, macOS, and Linux.
+* text=auto eol=lf
+
+# Unity text formats should remain readable in diffs.
+*.cs text
+*.unity text
+*.prefab text
+*.meta text
+*.asmdef text
+*.asmref text
+*.inputactions text
+
+# Windows command scripts use CRLF.
+*.bat text eol=crlf
+*.cmd text eol=crlf
