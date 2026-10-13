@@ -102,6 +102,13 @@ namespace NiceBoat
             ImpactSounds++;
         }
 
+        public void PlayEnemyBurst(Vector3 point)
+        {
+            if (!isActiveAndEnabled) return;
+            Play(cannonShot, point, 0.75f, 0.65f);
+            Play(splash, point, 0.4f, 0.85f);
+        }
+
         void OnCollisionEnter(Collision collision)
         {
             if (!isActiveAndEnabled) return;

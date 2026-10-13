@@ -16,6 +16,7 @@ namespace NiceBoat
         [Min(1f)] public float muzzleSpeed = 26f;
         [Range(0f, 30f)] public float elevation = 8f;
         [Min(0f)] public float hitImpulse = 55f;
+        [Min(1f)] public float damage = 25f;
         public LayerMask hitLayers = Physics.DefaultRaycastLayers;
         public const int Capacity = 8;
         const float Radius = 0.14f, Lifetime = 4f;
@@ -186,6 +187,7 @@ namespace NiceBoat
                 {
                     if (nearest.rigidbody != null && !nearest.rigidbody.isKinematic)
                         nearest.rigidbody.AddForceAtPosition(shot.velocity.normalized * hitImpulse, nearest.point, ForceMode.Impulse);
+                    nearest.collider.GetComponentInParent<IDamageable>()?.TakeDamage(damage, nearest.point);
                     Puff(nearest.point, nearest.normal, false);
                     SolidHits++; Impacted?.Invoke(nearest.point, false); Retire(shot);
                 }

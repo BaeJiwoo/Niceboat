@@ -137,6 +137,7 @@ public static partial class SummerHarborBuilder
         cameraData.requiresColorTexture = false;
         camera.gameObject.AddComponent<BoatFollowCamera>().target = boat.transform;
         new GameObject("Sailing HUD").AddComponent<OceanHud>().boat = boat;
+        ConfigureDummyEnemy(boat, ocean, effects);
 
         EditorSceneManager.MarkSceneDirty(scene);
         EditorSceneManager.SaveScene(scene, ScenePath);
