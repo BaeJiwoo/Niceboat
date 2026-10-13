@@ -3066,7 +3066,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cb76cb78a8cbc9643b4155029e8439e6, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NiceBoat.BuoyantBody
   ocean: {fileID: 0}
   floatPoints:
@@ -3093,7 +3093,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: da888b17e7f720b4e8d5c7d0c2571340, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NiceBoat.BoatController
   acceleration: 4.2
   topSpeed: 9
@@ -3112,7 +3112,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9010d4742b7d86846baee3b89b875b58, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NiceBoat.WaterInteraction
   effects: {fileID: 0}
   boat: 1
@@ -3128,7 +3128,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7e5d62523d84bfa4ab27584e87b46993, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NiceBoat.BoatCannon
   barrel: {fileID: 1012408102102646848}
   muzzle: {fileID: 7752044537392424536}
@@ -3140,9 +3140,10 @@ MonoBehaviour:
   muzzleSpeed: 26
   elevation: 8
   hitImpulse: 55
+  damage: 25
   hitLayers:
     serializedVersion: 2
-    m_Bits: 4294967291
+    m_Bits: 51
 --- !u!114 &873586382658381587
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3153,7 +3154,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fab899e55cada354aa1f3333fff64466, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NiceBoat.HarborAudio
   oceanLoop: {fileID: 8300000, guid: 492e9217534646f4f8fcfa744419c9f1, type: 3}
   engineLoop: {fileID: 8300000, guid: a455a291a65c2584ea1cafb8c1779855, type: 3}
