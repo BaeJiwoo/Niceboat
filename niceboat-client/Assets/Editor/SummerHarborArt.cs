@@ -32,22 +32,34 @@ public static partial class SummerHarborBuilder
         material.SetFloat("_WaveSpeed", 0.8f);
         material.SetFloat("_WorldUVScale", 0.055f);
         material.SetVector("_SurfaceScroll", new Vector4(0.006f, 0.004f, 0, 0));
-        material.SetFloat("_DepthDistance", 9f);
+        material.SetFloat("_DepthDistance", 8.5f);
         material.SetFloat("_ShallowOpacity", 0.73f);
         material.SetFloat("_DeepOpacity", 1f);
         material.SetFloat("_FoamWidth", 0.16f);
         material.SetFloat("_FoamBreakup", 0.9f);
-        material.SetFloat("_RippleStrength", 0.24f);
+        material.SetFloat("_RippleStrength", 0.2f);
         material.SetFloat("_RippleThreshold", 0.36f);
-        material.SetFloat("_RippleNormalStrength", 0.035f);
-        material.SetFloat("_SpecularIntensity", 0.12f);
-        material.SetFloat("_SpecularBreakup", 1f);
-        material.SetFloat("_SpecularSurfaceMask", 1f);
+        material.SetFloat("_RippleNormalStrength", 0.09f);
+        material.SetFloat("_DetailNormalStrength", 0.055f);
+        material.SetFloat("_DetailScale", 2.37f);
+        material.SetVector("_DetailScroll", new Vector4(-0.009f, 0.006f, 0, 0));
+        material.SetFloat("_SpecularIntensity", 0.32f);
+        material.SetFloat("_SpecularThreshold", 0.975f);
+        material.SetFloat("_SpecularBreakup", 0.9f);
+        material.SetFloat("_SpecularSurfaceMask", 0f);
+        material.SetFloat("_ShoreFoamWidth", 4.5f);
+        material.SetFloat("_ShoreWaveLength", 5.5f);
+        material.SetFloat("_ShoreWaveSpeed", 0.14f);
+        material.SetFloat("_ShoreFoamStrength", 0.7f);
+        material.SetFloat("_WakeFoamStrength", 0.8f);
+        material.SetFloat("_WakeNormalStrength", 0.24f);
+        material.SetFloat("_SkyReflectionStrength", 0.35f);
+        material.SetColor("_SkyReflectionColor", Hex("A5B5A3"));
         material.SetFloat("_ReceiveWaterShadows", 1f);
         material.EnableKeyword("_WATER_SHADOWS");
-        material.SetFloat("_MidtoneBrightness", 0.96f);
+        material.SetFloat("_MidtoneBrightness", 0.95f);
         material.SetFloat("_SunColorInfluence", 0.06f);
-        material.SetFloat("_LightThreshold", 0.65f);
+        material.SetFloat("_LightThreshold", 0.745f);
         material.SetColor("_ShallowColor", Hex("99AD99"));
         material.SetColor("_DeepColor", Hex("4E655D"));
         material.SetColor("_ShadowColor", Hex("43564D"));
@@ -62,12 +74,18 @@ public static partial class SummerHarborBuilder
         const int size = 512;
         var texture = new Texture2D(size, size, TextureFormat.RGBA32, false, true);
         var pixels = new Color[size * size];
+        var heights = new float[size * size];
         for (int y = 0; y < size; y++) for (int x = 0; x < size; x++)
         {
-            float u = x * Mathf.PI * 2f / size, v = y * Mathf.PI * 2f / size;
-            float noise = 0.5f + 0.19f * Mathf.Sin(u * 3 + v * 2) + 0.14f * Mathf.Cos(v * 5 - u * 2) + 0.1f * Mathf.Sin(u * 7 + v * 9);
-            pixels[y * size + x] = new Color(0.5f + Mathf.Cos(u * 3 + v * 2) * 0.22f,
-                0.5f + Mathf.Sin(v * 5 - u * 2) * 0.22f, 0, noise);
+            float u = (float)x / size, v = (float)y / size;
+            heights[y * size + x] = TileNoise(u,v,3,19) * 0.52f + TileNoise(u,v,7,71) * 0.29f + TileNoise(u,v,13,131) * 0.19f;
+        }
+        for (int y = 0; y < size; y++) for (int x = 0; x < size; x++)
+        {
+            float dx = heights[y * size + (x + 1) % size] - heights[y * size + (x + size - 1) % size];
+            float dz = heights[((y + 1) % size) * size + x] - heights[((y + size - 1) % size) * size + x];
+            pixels[y * size + x] = new Color(0.5f + Mathf.Clamp(dx * 25f,-0.48f,0.48f),
+                0.5f + Mathf.Clamp(dz * 25f,-0.48f,0.48f),0,Mathf.Clamp01((heights[y*size+x]-0.5f)*1.65f+0.5f));
         }
         var random = new System.Random(381);
         // Sparse tapered brush strokes, with periodic addressing on every edge.
@@ -94,6 +112,25 @@ public static partial class SummerHarborBuilder
         importer.textureCompression = TextureImporterCompression.Uncompressed;
         importer.filterMode = FilterMode.Trilinear; importer.anisoLevel = 2; importer.SaveAndReimport();
         return AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+    }
+
+    // Periodic value noise is baked in the editor; its derivatives form coherent slopes.
+    static float TileNoise(float u, float v, int cells, int seed)
+    {
+        float x = u * cells, y = v * cells;
+        int ix = Mathf.FloorToInt(x), iy = Mathf.FloorToInt(y);
+        float sx = Mathf.SmoothStep(0,1,x-ix), sy = Mathf.SmoothStep(0,1,y-iy);
+        float Value(int gx,int gy)
+        {
+            unchecked
+            {
+                uint h = (uint)((gx % cells) * 374761393 + (gy % cells) * 668265263 + seed * 982451653);
+                h = (h ^ (h >> 13)) * 1274126177u;
+                return ((h ^ (h >> 16)) & 65535u) / 65535f;
+            }
+        }
+        return Mathf.Lerp(Mathf.Lerp(Value(ix,iy),Value(ix+1,iy),sx),
+            Mathf.Lerp(Value(ix,iy+1),Value(ix+1,iy+1),sx),sy);
     }
 
     static Mesh SculptedIslandMesh()

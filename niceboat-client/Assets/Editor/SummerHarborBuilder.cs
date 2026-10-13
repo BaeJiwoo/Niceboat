@@ -78,6 +78,7 @@ public static partial class SummerHarborBuilder
             var collider = rock.AddComponent<MeshCollider>(); collider.sharedMesh = rockMesh; collider.convex = true;
         }
         HarborSettlement(world, islandCollider);
+        BakeHarborWaterMap(waterMaterial, world, ocean.seaLevel);
         CombineEnvironmentMeshes(world);
 
         var effects = new GameObject("Water interaction effects").AddComponent<WaterEffects>();
@@ -85,6 +86,7 @@ public static partial class SummerHarborBuilder
         effects.rippleMaterial = SaveAsset(new Material(Shader.Find("NiceBoat/Water/Ripple")), AssetRoot + "/Materials/Interaction ripples.mat");
         effects.sprayMaterial = SaveAsset(new Material(Shader.Find("NiceBoat/Water/Spray")), AssetRoot + "/Materials/Water spray.mat");
         var boat = Boat(ocean, effects);
+        ConfigureWaterInteraction(effects, boat.transform);
         boat.transform.SetPositionAndRotation(new Vector3(-5f, 0.3f, -9f), Quaternion.Euler(0f, 20f, 0f));
         PrefabUtility.SaveAsPrefabAsset(boat.gameObject, AssetRoot + "/Prefabs/PlayerBoat.prefab");
         var buoys = new GameObject("Navigation buoys").transform;

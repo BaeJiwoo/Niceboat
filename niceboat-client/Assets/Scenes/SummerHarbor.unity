@@ -59711,6 +59711,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1846521582}
   - component: {fileID: 1846521581}
+  - component: {fileID: 1846521583}
   m_Layer: 0
   m_Name: Water interaction effects
   m_TagString: Untagged
@@ -59733,6 +59734,7 @@ MonoBehaviour:
   ocean: {fileID: 1964916793}
   rippleMaterial: {fileID: 2100000, guid: b219a272bf5e580408abe3f2c6ed3af8, type: 2}
   sprayMaterial: {fileID: 2100000, guid: 13006d7dd201f7041b31318ba2f35b44, type: 2}
+  interactionField: {fileID: 1846521583}
 --- !u!4 &1846521582
 Transform:
   m_ObjectHideFlags: 0
@@ -59748,6 +59750,26 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1846521583
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1846521580}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bcfc389e98ce8ad40957c8723524755d, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::NiceBoat.WaterInteractionField
+  updateMaterial: {fileID: 2100000, guid: 4b6903e3ef884204788b9d53684f447f, type: 2}
+  followTarget: {fileID: 839961680}
+  resolution: 256
+  worldSize: 64
+  updatesPerSecond: 30
+  foamLifetime: 5
+  disturbanceLifetime: 2.4
+  drift: {x: 0.025, y: 0.015}
 --- !u!1 &1852290491
 GameObject:
   m_ObjectHideFlags: 0

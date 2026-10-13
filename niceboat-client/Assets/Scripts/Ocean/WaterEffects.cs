@@ -10,6 +10,7 @@ namespace NiceBoat
         public OceanSurface ocean;
         public Material rippleMaterial;
         public Material sprayMaterial;
+        public WaterInteractionField interactionField;
         public const int Capacity = 72;
         const int Segments = 3;
         struct Ripple
@@ -82,6 +83,9 @@ namespace NiceBoat
             forward.y = 0f;
             if (forward.sqrMagnitude < 0.01f) forward = Vector3.forward;
             bool wake = kind == 1f, bow = kind == 2f;
+            if (!wake && interactionField != null)
+                interactionField.DepositSegment(position, position, bow ? 0.75f : 0.6f,
+                    strength * 0.14f, strength * 0.5f);
             ripples[cursor] = new Ripple { position = position, forward = forward.normalized, born = Time.time,
                 life = bow ? 0.65f : (wake ? 3.6f : 1.8f), size = bow ? 0.8f : (wake ? 0.65f : 0.35f),
                 strength = Mathf.Clamp01(strength), stretch = wake ? 1.5f : 0.85f,
@@ -113,6 +117,8 @@ namespace NiceBoat
                 float age = time - ripple.born;
                 if (ripple.life <= 0f || age < 0f || age >= ripple.life) continue;
                 ActiveRippleCount++;
+                // The persistent field draws connected wakes; keep mesh bow/impact accents.
+                if (ripple.kind == 1f && interactionField != null && interactionField.IsReady) continue;
                 float progress = age / ripple.life;
                 float radius = ripple.size + age * (ripple.kind == 2f ? 0.35f : 0.5f);
                 float opacity = ripple.strength * (1f - progress) * Mathf.Clamp01(age * 12f);
