@@ -8,6 +8,9 @@ namespace NiceBoat
         GUIStyle title, small, number;
         string speedText = "0.0";
         float nextUpdate;
+        BoatCannon cannon;
+
+        void Start() { if (boat != null) cannon = boat.GetComponent<BoatCannon>(); }
 
         void Update()
         {
@@ -34,12 +37,20 @@ namespace NiceBoat
             float w = Screen.width / scale, h = Screen.height / scale;
             GUI.color = new Color(0.12f, 0.16f, 0.14f, 0.86f);
             GUI.DrawTexture(new Rect(22, 22, 300, 88), Texture2D.whiteTexture);
-            GUI.DrawTexture(new Rect(22, h - 76, 660, 52), Texture2D.whiteTexture);
+            GUI.DrawTexture(new Rect(22, h - 97, 660, 73), Texture2D.whiteTexture);
             GUI.DrawTexture(new Rect(w - 144, 22, 122, 88), Texture2D.whiteTexture);
             GUI.color = Color.white;
             GUI.Label(new Rect(40, 32, 270, 34), "NICEBOAT", title);
             GUI.Label(new Rect(41, 70, 270, 24), "THE OLD FISHERY  /  FREE SAIL", small);
-            GUI.Label(new Rect(40, h - 63, 630, 28), "WASD / ARROWS  Sail     SPACE  Brake     Q / E  Orbit     WHEEL  Zoom     R  Reset", small);
+            GUI.Label(new Rect(40, h - 86, 630, 28), "WASD / ARROWS  Sail     SPACE  Brake     Q / E  Orbit     WHEEL  Zoom     R  Reset", small);
+            GUI.Label(new Rect(40, h - 61, 410, 28), "F / LEFT CLICK / RT  Fire bow cannon", small);
+            if (cannon != null)
+            {
+                GUI.Label(new Rect(440, h - 61, 140, 28), cannon.ReloadProgress >= 1f ? "CANNON READY" : "RELOADING", small);
+                GUI.color = new Color(0.76f, 0.64f, 0.38f);
+                GUI.DrawTexture(new Rect(577, h - 53, 82 * cannon.ReloadProgress, 5), Texture2D.whiteTexture);
+                GUI.color = Color.white;
+            }
             GUI.Label(new Rect(w - 127, 30, 100, 42), speedText, number);
             GUI.Label(new Rect(w - 126, 75, 100, 22), "KNOTS", small);
             GUI.matrix = Matrix4x4.identity;
