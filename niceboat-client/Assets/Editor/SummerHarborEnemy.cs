@@ -46,37 +46,9 @@ public static partial class SummerHarborBuilder
         collider.center = new Vector3(0f, 1.1f, 0f); collider.radius = 1.15f; collider.height = 3.1f;
         var enemy = root.AddComponent<HarborDummyEnemy>();
         enemy.player = boat; enemy.ocean = ocean; enemy.waterEffects = effects; enemy.burstMaterial = effects.sprayMaterial;
-        var model = new GameObject("Black monster").transform; model.SetParent(root.transform, false); enemy.model = model;
-        var charcoal = Lit("Monster charcoal", Hex("151D21"));
-        var hornColor = Lit("Monster horn", Hex("242C30"));
-        var eyes = SaveAsset(new Material(Shader.Find("Universal Render Pipeline/Unlit")), AssetRoot + "/Materials/Monster red eyes.mat");
-        eyes.SetColor("_BaseColor", new Color(1f, 0.018f, 0.007f)); eyes.SetFloat("_Cull", 0f);
-        EditorUtility.SetDirty(eyes);
-        var lump = SaveMesh(RockMesh(), "Monster body");
-        var torso = MeshObject("Faceted black body", lump, charcoal, model);
-        torso.transform.localPosition = new Vector3(0f, 1.15f, 0f);
-        torso.transform.localScale = new Vector3(1.45f, 1.65f, 1.3f);
-        var eyeMesh = SaveMesh(MonsterEyeMesh(), "Monster eye slit");
-        for (int side = -1; side <= 1; side += 2)
-        {
-            string suffix = side < 0 ? " left" : " right";
-            var horn = MeshObject("Swept horn" + suffix, SaveMesh(MonsterHornMesh(side), "Monster horn" + suffix), hornColor, model);
-            horn.transform.localPosition = new Vector3(side * 0.78f, 2.17f, 0f);
-            var fin = MeshObject("Swimming fin" + suffix, lump, charcoal, model);
-            fin.transform.localPosition = new Vector3(side * 1.22f, 0.28f, 0f);
-            fin.transform.localScale = new Vector3(0.42f, 0.35f, 1.05f);
-            fin.transform.localRotation = Quaternion.Euler(0f, side * 48f, side * 15f);
-            var eye = MeshObject("Red eye" + suffix, eyeMesh, eyes, model);
-            eye.transform.localPosition = new Vector3(side * 0.43f, 1.82f, 1.13f);
-            eye.transform.localScale = new Vector3(side, 1f, 1f);
-            eye.GetComponent<Renderer>().shadowCastingMode = ShadowCastingMode.Off;
-        }
-        var renderers = new List<Renderer>();
-        foreach (var renderer in model.GetComponentsInChildren<Renderer>())
-            if (renderer.sharedMaterial != eyes) renderers.Add(renderer);
-        enemy.skin = renderers.ToArray();
+        ConfigureShadowWraith(enemy);
         ConfigureEnemyHealthBar(enemy);
-        PrefabUtility.SaveAsPrefabAsset(root, AssetRoot + "/Prefabs/TrainingMonster.prefab");
+        PrefabUtility.SaveAsPrefabAsset(root, AssetRoot + "/Prefabs/ShadowWraith.prefab");
     }
 
     static void ConfigureEnemyHealthBar(HarborDummyEnemy enemy)
@@ -92,7 +64,7 @@ public static partial class SummerHarborBuilder
         importer.textureCompression = TextureImporterCompression.Uncompressed; importer.SaveAndReimport();
         var sprite = AssetDatabase.LoadAssetAtPath<Sprite>(path);
         var go = new GameObject("Monster health", typeof(RectTransform), typeof(Canvas));
-        go.transform.SetParent(enemy.transform, false); go.transform.localPosition = new Vector3(0f, 3.7f, 0f);
+        go.transform.SetParent(enemy.transform, false); go.transform.localPosition = new Vector3(0f, 4.3f, 0f);
         go.transform.localScale = Vector3.one * 0.015f;
         var rect = (RectTransform)go.transform; rect.sizeDelta = new Vector2(250f, 90f);
         enemy.healthCanvas = go.GetComponent<Canvas>(); enemy.healthCanvas.renderMode = RenderMode.WorldSpace;
@@ -101,7 +73,7 @@ public static partial class SummerHarborBuilder
         EnemyBarImage("Empty health", rect, new Vector2(236f, 12f), Hex("4A3032"), sprite, false);
         enemy.damageTrail = EnemyBarImage("Recent damage", rect, new Vector2(236f, 12f), Hex("EDBD6D"), sprite, true);
         enemy.healthFill = EnemyBarImage("Remaining health", rect, new Vector2(236f, 12f), Hex("D8493F"), sprite, true);
-        enemy.healthText = EnemyBarText("Health value", rect, new Vector2(0f, 28f), 25, "DUMMY  100 / 100");
+        enemy.healthText = EnemyBarText("Health value", rect, new Vector2(0f, 28f), 23, "WRAITH  100 / 100");
         enemy.damageText = EnemyBarText("Damage popup", rect, new Vector2(0f, 55f), 32, "");
         enemy.damageText.enabled = false;
     }

@@ -12,6 +12,7 @@ namespace NiceBoat
         public OceanSurface ocean;
         public WaterEffects waterEffects;
         public Transform model;
+        public ShadowWraithVfx wraith;
         public Renderer[] skin;
         public Canvas healthCanvas;
         public Image healthFill, damageTrail;
@@ -59,9 +60,10 @@ namespace NiceBoat
             if (player != null) audio = player.GetComponent<HarborAudio>();
             view = Camera.main;
             tint = new MaterialPropertyBlock();
+            if (skin == null) skin = System.Array.Empty<Renderer>();
             skinColors = new Color[skin.Length];
             for (int i = 0; i < skin.Length; i++) skinColors[i] = skin[i].sharedMaterial.GetColor(BaseColor);
-            CreateBurst();
+            if (wraith == null) CreateBurst();
             SetVisible(false);
         }
 
@@ -128,9 +130,11 @@ namespace NiceBoat
             if (!isActiveAndEnabled || !IsAlive || !(amount > 0f)) return;
             float actual = Mathf.Min(amount, Health);
             Health = Mathf.Max(0f, Health - actual);
-            hitAt = Time.time; SetFlash(true);
+            hitAt = Time.time;
+            if (wraith != null) wraith.PlayHit(point); else SetFlash(true);
             if (damageText != null) damageText.text = "-" + actual.ToString("0");
-            UpdateHealth(); EmitBurst(point, false);
+            UpdateHealth();
+            if (wraith == null) EmitBurst(point, false);
             if (Health <= 0f) Die();
         }
 
@@ -138,10 +142,11 @@ namespace NiceBoat
         {
             IsAlive = false; DeathCount++; diedAt = Time.time;
             respawnAt = Time.time + Mathf.Max(0.5f, respawnDelay);
-            SetVisible(false);
+            if (wraith != null) { hitbox.enabled = false; wraith.PlayDeath(); }
+            else SetVisible(false);
             // Briefly retain the empty health bar so the killing hit is legible.
             if (healthCanvas != null) healthCanvas.enabled = true;
-            EmitBurst(body.position + Vector3.up, true);
+            if (wraith == null) EmitBurst(body.position + Vector3.up, true);
             if (waterEffects != null)
             {
                 waterEffects.EmitRipple(body.position, Vector3.forward, 1f, false);
@@ -155,6 +160,7 @@ namespace NiceBoat
         public bool TryRespawn()
         {
             if (IsAlive || player == null || ocean == null || body == null) return false;
+            if (wraith != null && !wraith.DeathComplete) return false;
             var forward = Vector3.ProjectOnPlane(player.transform.forward, Vector3.up).normalized;
             if (forward.sqrMagnitude < 0.1f) forward = Vector3.forward;
             // A bounded search validates the entire patrol, including space below the surface.
@@ -177,6 +183,7 @@ namespace NiceBoat
                 Health = Mathf.Max(1f, maxHealth); ghostHealth = 1f; hitAt = -10f;
                 SetFlash(false); IsAlive = true; SpawnCount++;
                 SetVisible(true); UpdateHealth();
+                if (wraith != null) wraith.ResetForSpawn();
                 if (damageText != null) damageText.enabled = false;
                 if (damageTrail != null) damageTrail.fillAmount = 1f;
                 return true;
@@ -224,11 +231,12 @@ namespace NiceBoat
         void UpdateHealth()
         {
             if (healthFill != null) healthFill.fillAmount = HealthFraction;
-            if (healthText != null) healthText.text = "DUMMY  " + Health.ToString("0") + " / " + maxHealth.ToString("0");
+            if (healthText != null) healthText.text = (wraith != null ? "WRAITH  " : "DUMMY  ") + Health.ToString("0") + " / " + maxHealth.ToString("0");
         }
 
         void SetFlash(bool active)
         {
+            if (wraith != null) return;
             flashing = active;
             for (int i = 0; i < skin.Length; i++)
             {
@@ -279,9 +287,15 @@ namespace NiceBoat
         void OnDisable()
         {
             SetVisible(false);
+            if (wraith != null) wraith.Suspend();
             if (burst != null) burst.Clear();
         }
 
-        void OnEnable() { if (body != null && IsAlive) SetVisible(true); }
+        void OnEnable()
+        {
+            if (body == null || !IsAlive) return;
+            SetVisible(true);
+            if (wraith != null) wraith.ResetForSpawn();
+        }
     }
 }
