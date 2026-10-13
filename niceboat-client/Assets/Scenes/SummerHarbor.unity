@@ -27940,6 +27940,7 @@ GameObject:
   - component: {fileID: 839961679}
   - component: {fileID: 839961681}
   - component: {fileID: 839961686}
+  - component: {fileID: 839961687}
   m_Layer: 0
   m_Name: Player Boat - WASD
   m_TagString: Untagged
@@ -28160,6 +28161,29 @@ MonoBehaviour:
   hitLayers:
     serializedVersion: 2
     m_Bits: 4294967291
+--- !u!114 &839961687
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 839961678}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fab899e55cada354aa1f3333fff64466, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::NiceBoat.HarborAudio
+  oceanLoop: {fileID: 8300000, guid: 492e9217534646f4f8fcfa744419c9f1, type: 3}
+  engineLoop: {fileID: 8300000, guid: a455a291a65c2584ea1cafb8c1779855, type: 3}
+  hullWashLoop: {fileID: 8300000, guid: c719e65dfa0bb1a4092af158b4752b03, type: 3}
+  cannonShot: {fileID: 8300000, guid: dfe8186cbc2ceb042b2d8e6907147ae6, type: 3}
+  splash: {fileID: 8300000, guid: 78e90ac154632a74e83716a72b8efb46, type: 3}
+  hullKnock: {fileID: 8300000, guid: ac17a388d12153142903461830aa3078, type: 3}
+  reload: {fileID: 8300000, guid: 7f1348b812b56784b8057424373aca00, type: 3}
+  masterVolume: 0.8
+  ambienceVolume: 0.26
+  engineVolume: 0.23
+  effectsVolume: 0.85
 --- !u!1 &846363944
 GameObject:
   m_ObjectHideFlags: 0

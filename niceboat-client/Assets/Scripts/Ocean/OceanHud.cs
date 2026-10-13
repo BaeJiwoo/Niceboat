@@ -9,8 +9,14 @@ namespace NiceBoat
         string speedText = "0.0";
         float nextUpdate;
         BoatCannon cannon;
+        HarborAudio harborAudio;
 
-        void Start() { if (boat != null) cannon = boat.GetComponent<BoatCannon>(); }
+        void Start()
+        {
+            if (boat == null) return;
+            cannon = boat.GetComponent<BoatCannon>();
+            harborAudio = boat.GetComponent<HarborAudio>();
+        }
 
         void Update()
         {
@@ -43,7 +49,9 @@ namespace NiceBoat
             GUI.Label(new Rect(40, 32, 270, 34), "NICEBOAT", title);
             GUI.Label(new Rect(41, 70, 270, 24), "THE OLD FISHERY  /  FREE SAIL", small);
             GUI.Label(new Rect(40, h - 86, 630, 28), "WASD / ARROWS  Sail     SPACE  Brake     Q / E  Orbit     WHEEL  Zoom     R  Reset", small);
-            GUI.Label(new Rect(40, h - 61, 410, 28), "F / LEFT CLICK / RT  Fire bow cannon", small);
+            GUI.Label(new Rect(40, h - 61, 410, 28), harborAudio != null && harborAudio.Muted
+                ? "F / LEFT CLICK / RT  Fire      M  Sound OFF"
+                : "F / LEFT CLICK / RT  Fire      M  Sound ON", small);
             if (cannon != null)
             {
                 GUI.Label(new Rect(440, h - 61, 140, 28), cannon.ReloadProgress >= 1f ? "CANNON READY" : "RELOADING", small);
